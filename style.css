@@ -1,0 +1,37 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+header {
+    margin: 50px;
+}
+h1 {
+    color: darkgray;
+    font-style: italic;
+    text-decoration: underline;
+}
+.grid-container {
+    background-color: aliceblue;
+    padding: 10px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px; /* You can adjust the gap size to control spacing between squares */
+    width: 500px; /* Adjust the width to fit your needs */
+    height: 500px; /* Adjust the height to fit your needs */
+}
+
+
+.grid-item {
+    background-color: lightgray;
+    border: 1px solid darkgray;
+    padding: 0;
+    margin: 0;
+    
+}
+#refresh-btn{
+    margin: 15px;
+    height: 40px;
+    width: 100px;
+}
