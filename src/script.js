@@ -1,39 +1,17 @@
+
+
 class Game {
   constructor() {
     this.gameField = document.getElementById("game-field");
-
-    this.playerRed1 = new Player(20, 25, 80, 80, "image/red-1217969_640.png");
-    this.playerRed2 = new Player(120, 320, 80, 80, "image/red-1217969_640.png");
-    this.playerRed3 = new Player(320, 125, 80, 80, "image/red-1217969_640.png");
-    this.playerRed4 = new Player(420, 425, 80, 80, "image/red-1217969_640.png");
-    this.playerBlue1 = new Player(
-      120,
-      125,
-      80,
-      80,
-      "image/yellow-1217980_640.png"
-    );
-    this.playerBlue2 = new Player(
-      20,
-      425,
-      80,
-      80,
-      "image/yellow-1217980_640.png"
-    );
-    this.playerBlue3 = new Player(
-      420,
-      20,
-      80,
-      80,
-      "image/yellow-1217980_640.png"
-    );
-    this.playerBlue4 = new Player(
-      320,
-      325,
-      80,
-      80,
-      "image/yellow-1217980_640.png"
-    );
+    this.winText = document.getElementById("win-text");
+    this.playerRed1 = new Player(10, 10, 100, 100, "image/red.png", 'red');
+    this.playerRed2 = new Player(110, 310, 100, 100, "image/red.png", 'red');
+    this.playerRed3 = new Player(310, 110, 100, 100, "image/red.png", 'red');
+    this.playerRed4 = new Player(410, 410, 100, 100, "image/red.png", 'red');
+    this.playerBlue1 = new Player(110,110,100,100,"image/blue.png", 'blue');
+    this.playerBlue2 = new Player(10,410,100,100,"image/blue.png", 'blue');
+    this.playerBlue3 = new Player(410,10,100,100,"image/blue.png", 'blue');
+    this.playerBlue4 = new Player(310,310,100,100,"image/blue.png", 'blue');
     this.playerSelected= [];
     this.players = [
       this.playerBlue1,
@@ -45,6 +23,7 @@ class Game {
       this.playerRed3,
       this.playerRed4,
     ];
+   
   
     this.players.forEach(player => {
         player.addEventListener('click', (event) => {
@@ -56,40 +35,67 @@ class Game {
         player.allPlayers = this.players;
       });
     
-       
+
   }
-
-
-  
 
   start() {
     this.gameLoop();
   }
 
   gameLoop() {
-    // console.log("game lopp");
     this.update();
-    //this.checkOccupiedGridItems();
+    
     window.requestAnimationFrame(() => this.gameLoop());
   }
   update() {
     if (this.playerSelected.length > 0) {
         this.playerSelected[0].move();
-    }
-}
-checkOccupiedGridItems() {
-    for (const player of this.players) {
-      if (player.checkCollisions()) {
-        console.log(`Grid item occupied by player at (${player.left}, ${player.top})`);
-      }
+        this.checkWinCondition();
+       
     }
   }
 
+  checkWinCondition() {
+    const playerColor = this.playerSelected[0].color;
+    let arr = [];
+    // Check for a horizontal line
+    let horizontalCount = 0;
+    for (const player of this.players) {
+      if (player.color === 'red' && player.top === this.playerSelected[0].top) {
+        arr.push(player);
+        //horizontalCount++;
+        console.log(arr);
+      }
+    }
+     /*
+    // Check for a vertical line
+    let verticalCount = 0;
+    for (const player of this.players) {
+      if (player.color === playerColor && player.left === this.playerSelected[0].left) {
+        verticalCount++;
+        console.log(verticalCount);
+      }
+    }
 
+    if (horizontalCount >= 4 || verticalCount >= 4) {
+        
+      let h1 = document.createElement("h1");
+      h1.innerHTML = "wins wins";
+      this.winText.appendChild(h1);
+    }
+    */
+  }
 }
 
+
+ 
+  
+  
+  
+  
+
 class Player {
-  constructor(left, top, width, height, imgSrc, allPlayers) {
+  constructor(left, top, width, height, imgSrc, allPlayers, color) {
     this.gameField = document.getElementById("game-field");
     this.left = left;
     this.top = top;
@@ -106,12 +112,20 @@ class Player {
     this.element.style.top = `${top}px`;
     this.gameField.appendChild(this.element);
     this.allPlayers = allPlayers;
+    this.color = color;
+    
+    
+
+    
   }
   addEventListener(eventType, callback) {
     this.element.addEventListener(eventType, callback);
   }
 
+
   move() {
+   
+    
     this.left += this.directionX;
     this.top += this.directionY;
     this.updatePosition();
@@ -137,38 +151,52 @@ class Player {
       this.top = maxTop;
     }
 
-    this.updatePosition();
-    this.checkCollisions();
-  }
+    if(this.checkCollisions()) {
+        this.left = prevLeft;
+        this.top = prevTop;
+    }
+    
+
+
+    
+    this.updatePosition();   
+    
+}
+
+  
   updatePosition() {
-    // console.log("update Pos");
+  
     this.element.style.left = `${this.left}px`;
     this.element.style.top = `${this.top}px`;
+  
+    
   }
+
+
+
+
+  
   checkCollisions() {
     for (const player of this.allPlayers) {
       if (player !== this) {
-        // Check if the current player collides with another player
+        
         if (
           this.left < player.left + player.width &&
           this.left + this.width > player.left &&
           this.top < player.top + player.height &&
           this.top + this.height > player.top
         ) {
-          // Collision detected, stop the player's movement
+         
           console.log("detected");
-          //return true;
-          this.directionX = 0;
-          this.directionY = 0;
-          //this.players.pop();
-
+          return true;
+          
         }
       }
     }
     return false;
   }
-
 }
+
 window.onload = function () {
   const game = new Game();
   const refreshBtn = document.getElementById("refresh-btn");
@@ -183,43 +211,72 @@ window.onload = function () {
       "ArrowRight",
       "ArrowDown",
     ];
-
+  
     if (possibleKeystrokes.includes(key)) {
       event.preventDefault();
-
+  
+     
+      const player = game.playerSelected[0];
+      const prevLeft = player.left;
+      const prevTop = player.top;
+  
+        let newX = player.left;
+        let newY = player.top;
+  
       switch (key) {
         case "ArrowLeft":
-          
-
-          game.playerSelected[0].directionX = -1;
-          if (game.playerSelected[0].directionY !== 0) {
-            game.playerSelected[0].directionY = 0;
-          }
+          newX -= 100;
           break;
         case "ArrowUp":
-          
-          game.playerSelected[0].directionY = -1;
-          if (game.playerSelected[0].directionX !== 0) {
-            game.playerSelected[0].directionX = 0;
-          }
+          newY -= 100;
           break;
         case "ArrowRight":
-          
-          game.playerSelected[0].directionX = 1;
-          if (game.playerSelected[0].directionY !== 0) {
-            game.playerSelected[0].directionY = 0;
-          }
+          newX += 100;
           break;
         case "ArrowDown":
-          
-          game.playerSelected[0].directionY = 1;
-          if (game.playerSelected[0].directionX !== 0) {
-            game.playerSelected[0].directionX = 0;
-          }
+          newY += 100;
           break;
       }
+  
+      // Check if the new position is within the game boundaries
+      const minLeft = 10;
+      const minTop = 10;
+      const maxLeft = game.gameField.offsetWidth - player.width - 10;
+      const maxTop = game.gameField.offsetHeight - player.height - 10;
+  
+      if (newX < minLeft) {
+        newX = minLeft;
+      }
+  
+      if (newY < minTop) {
+        newY = minTop;
+      }
+  
+      if (newX > maxLeft) {
+        newX = maxLeft;
+      }
+  
+      if (newY > maxTop) {
+        newY = maxTop;
+      }
+  
+      // Update the player's position
+      player.left = newX;
+      player.top = newY;
+
+      if (player.checkCollisions()) {
+        player.left = prevLeft;
+        player.top = prevTop;
+      }
+
+
+      player.updatePosition();
+      
     }
   }
+
+
+
 
   function handleKeyup(event) {
     const key = event.key;
@@ -253,4 +310,6 @@ window.onload = function () {
 
   window.addEventListener("keyup", handleKeyup);
   window.addEventListener("keydown", handleKeydown);
+
+  
 };
