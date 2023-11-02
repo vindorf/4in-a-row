@@ -10,8 +10,24 @@ h1 {
     font-style: italic;
     text-decoration: underline;
 }
-.grid-container {
+hr {
+    width: 50%;
+}
+#start-screen {
+   display: block;
+   background-color: aliceblue;
+   
+}
+
+#game-screen {
+    display: none;
     background-color: aliceblue;
+    padding: 10px;
+}
+
+.grid-container {
+   
+   
     padding: 10px;
     margin: auto;
     position: relative;
@@ -31,6 +47,13 @@ h1 {
     margin: 0;
     
 }
+
+#start-button {
+    margin: 15px;
+    height: 40px;
+    width: 100px;
+}
+
 #refresh-btn{
     margin: 15px;
     height: 40px;
